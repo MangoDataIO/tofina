@@ -54,6 +54,10 @@ class Portfolio:
         )
         self.instruments[name + "_" + assetName] = instrument_
 
+    @property
+    def num_instruments(self):
+        return len(self.instruments)
+
     def setStrategy(
         self,
         portfolioWeights: List[float],
