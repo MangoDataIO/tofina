@@ -129,7 +129,7 @@ class Optimizer:
 class EarlyStopping:
     def __init__(self, patience=20, tol=0.00001):
         self.patience = patience
-        self.best_loss = 999999999999999
+        self.best_loss = float("inf")
         self.noImprovement = 0
         self.tol = tol
 

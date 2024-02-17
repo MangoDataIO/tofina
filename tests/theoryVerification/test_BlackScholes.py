@@ -1,7 +1,6 @@
-from tofina.components import asset, preference
-from tofina.theory import binomial, blackScholes
-import tofina.utils as utils
-from tofina.macros import portfolioOptimization, optionPricing
+from tofina.components import preference
+from tofina.theory import blackScholes
+from tofina.macros import optionPricing
 import pandas as pd
 import numpy as np
 

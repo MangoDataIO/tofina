@@ -1,12 +1,8 @@
 import torch
 from tofina.components import (
     asset,
-    instrument,
-    strategy,
     portfolio,
 )
-import tofina.utils as utils
-from typing import Optional
 from tofina.macros import portfolioGenerator
 
 

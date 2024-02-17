@@ -1,9 +1,6 @@
-from tofina.components import asset, preference
 from tofina.theory import varianceMinimization
-import tofina.utils as utils
-from tofina.macros import portfolioOptimization, optionPricing
+from tofina.macros import portfolioOptimization
 import pandas as pd
-import numpy as np
 import torch
 
 

@@ -2,6 +2,8 @@ import torch
 import tofina.utils as utils
 from torch.distributions.multivariate_normal import MultivariateNormal
 from typing import Callable, Union, List
+from arch.univariate.base import ARCHModelResult
+from pytorch_forecasting import DeepAR
 
 processFnType = Callable[[int, int, dict], torch.Tensor]
 
