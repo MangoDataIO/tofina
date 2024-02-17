@@ -3,6 +3,7 @@ from tofina.extern.arch import forecastDecoratorGARCH
 from tofina.extern.yfinance import loadHistoricalStockData
 import datetime as dt
 import numpy as np
+from pathlib import Path
 
 
 # TODO
@@ -25,4 +26,9 @@ def test_univariateGARCHstock():
     )
     backtester = Backtester(timestamps=timestamps)
     backtester.stockDataFromDataFrame(SPY, "SPY")
-    backtester.registerForecaster(forecaster, ["SPY"])
+    backtester.registerForecaster(forecaster, ["SPY"], allowShorting=False)
+    dir_path = Path("./tests/results/SPY_GARCH")
+    if dir_path.exists():
+        dir_path.rmdir()
+    dir_path.mkdir(parents=True, exist_ok=False)
+    backtester.optimizeStrategy(dir_path)

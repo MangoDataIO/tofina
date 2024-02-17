@@ -8,6 +8,7 @@ from pathlib import Path
 from tofina.components.instrument import NonDerivativePayout
 from tofina.components.strategy import BuyAndHold
 from tofina.macros.portfolioOptimization import optimizeStockPortfolioRiskAverse
+from tofina.components.optimizer import Optimizer
 from tqdm import tqdm
 
 
@@ -22,12 +23,17 @@ timeType = Union[
 ]
 
 
+def equal_weights(self, num_instruments: int):
+    return [1 / num_instruments] * num_instruments
+
+
 class Backtester:
     def __init__(self, timestamps: List[timeType], horizon=20, monteCarloTrials=1000):
         self.historicalTrajectory = {}
         self.timestamps = timestamps
         self.horizon = horizon
-        self.pointInTimePortfolio: Dict[str, portfolio.Portfolio] = {}
+        self.pointInTimePortfolio: Dict[timeType, portfolio.Portfolio] = {}
+        self.optimizers: Dict[timeType, Optimizer] = {}
         for timestamp in timestamps:
             self.pointInTimePortfolio[timestamp] = portfolio.Portfolio(
                 processLength=horizon, monteCarloTrials=monteCarloTrials
@@ -89,17 +95,14 @@ class Backtester:
                     portfolio_, ticker, price, allowShorting, comission_dict
                 )
 
-    def equal_weights(self, num_instruments: int):
-        return [1 / num_instruments] * num_instruments
-
     def optimizeStrategy(self, logFolderPath: str):
         logFolderPath = Path(logFolderPath)
         for timestamp in tqdm(self.timestamps):
             portfolio_ = self.pointInTimePortfolio[timestamp]
             portfolio_.setStrategy(
-                self.equal_weights(portfolio_.num_instruments), BuyAndHold
+                equal_weights(portfolio_.num_instruments), BuyAndHold
             )
-            optimizeStockPortfolioRiskAverse(
+            self.optimizers[timestamp] = optimizeStockPortfolioRiskAverse(
                 portfolio_,
                 logFolderPath / f"portfolioOptimization_{timestamp}.csv",
             )
