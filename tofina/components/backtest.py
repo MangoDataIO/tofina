@@ -2,6 +2,7 @@ import torch
 import pandas as pd
 from typing import List, Union
 import datetime as dt
+import tofina.components.portfolio as portfolio
 
 
 def forecast(date: str, asset: str) -> torch.Tensor:
@@ -16,20 +17,24 @@ timeType = Union[
 
 
 class Backtester:
-    def __init__(self, timestamps: List[timeType], horizon=20):
-        self.ts_dict = {}
+    def __init__(self, timestamps: List[timeType], horizon=20, monteCarloTrials=1000):
+        self.historicalTrajectory = {}
         self.ticker_forecaster_map = {}
         self.timestamps = timestamps
         self.horizon = horizon
+        self.pointInTimePortfolio = {}
+        for timestamp in timestamp:
+            self.pointInTimePortfolio[timestamp] = portfolio.Portfolio(
+                processLength=horizon, monteCarloTrials=monteCarloTrials
+            )
 
-    def optionsDataFromDataFrame(self, df, ticker):
-        def process_df(df: pd.DataFrame) -> pd.DataFrame:
-            pass
-
-        self.ts_dict[ticker] = process_df(df)
-
-    def stockDataFromDataFrame(self, df, ticker):
-        self.ts_dict[ticker] = df
+    def stockDataFromDataFrame(self, df: pd.DataFrame, ticker: str):
+        self.historicalTrajectory[ticker] = {}
+        for timestamp in self.timestamps:
+            index = df.index.get_loc(timestamp)
+            self.historicalTrajectory[ticker][timestamp] = df["Close"].values[
+                index : index + self.horizon
+            ]
 
     def registerForecaster(self, forecast, supported_tickers):
         for ticker in supported_tickers:

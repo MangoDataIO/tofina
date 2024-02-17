@@ -5,6 +5,10 @@ import datetime as dt
 import numpy as np
 
 
+# TODO
+# 1. Make forecaster compatible with Assets
+# 2. Create realPath dictionary
+# 3. Create backtest method
 def test_univariateGARCHstock():
     SPY = loadHistoricalStockData("SPY")
     start_date = dt.datetime(2023, 1, 1)
