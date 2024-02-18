@@ -53,8 +53,12 @@ class Strategy:
         liquidations = self.liquidationFn(assetX, self.instruments, self.params)
         liquidations[:, :, -1] = 1
         liquidations[:, :, 0] = 0
+        _, _, processLength = liquidations.shape
         for i, key in enumerate(self.instruments):
-            if "maturity" in self.instruments[key].params:
+            if (
+                "maturity" in self.instruments[key].params
+                and self.instruments[key].params["maturity"] <= processLength
+            ):
                 liquidations[i, :, self.instruments[key].params["maturity"] - 1] = 1
         liquidations = self.backrollLiquidations(liquidations).permute(1, 2, 0)
         prices = torch.cat(

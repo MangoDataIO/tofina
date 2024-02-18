@@ -27,6 +27,7 @@ class Instrument:
         instrumentPayout = []
         processLength = self.assetSimulation.shape[-1]
         for t in range(processLength):
+            # Permutes are required to make Payout function simpler
             periodPayoff = self.payoff(
                 self.assetSimulation.permute(1, 0), t, self.params
             )
@@ -56,19 +57,21 @@ def optionPayout_(
     isCall: bool = True,
     optionType: str = "European",
 ) -> torch.Tensor:
+    if optionType not in ["European", "American"]:
+        raise ValueError("optionType must be either European or American")
+
     strikePrice = params["strikePrice"]
     maturity = params["maturity"] - 1
+
+    if (optionType == "European" and t < maturity) or (t > maturity):
+        return torch.zeros(X[t].shape[0])
+
     if isCall:
         payout = X[t] - strikePrice
     else:
         payout = strikePrice - X[t]
     payout[payout < 0] = 0
-    if optionType == "European":
-        payout[t != maturity] = 0
-    elif optionType == "American":
-        payout[t > maturity] = 0
-    else:
-        raise ValueError("optionType must be either European or American")
+
     return payout
 
 

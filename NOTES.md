@@ -50,16 +50,12 @@ Design Suggestion:
 
 Today work:
 
-1. Experiment with different GARCH Setups
+1. Change Option payout
 2. Option parser
-3. Backtest reporting
-4. DeepAR integration
-5. Write tests
-6. Speed up Backtesting by creating global simultaneous optimizer
-7. Test comission
-
-GARCH experiments:
-
-1. Add risk free asset
-2. Add comissions
-3. Change risk averse
+3. Proper Liquidations
+4. Backtest reporting
+5. DeepAR integration
+6. Write tests
+7. Speed up Backtesting by creating global simultaneous optimizer
+8. Test comission
+9. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit

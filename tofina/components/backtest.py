@@ -43,6 +43,9 @@ class Backtester:
                 index : index + self.horizon
             ]
 
+    def parseOptionData(self, df: pd.DataFrame, ticker: str):
+        pass
+
     def addDeposit(self, interestRate: float):
         for timestamp in self.timestamps:
             portfolio_ = self.pointInTimePortfolio[timestamp]
