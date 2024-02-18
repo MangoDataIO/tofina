@@ -8,6 +8,8 @@ from tofina.components import asset
 from tofina.components.instrument import (
     NonDerivativePayout,
     payoffFnType,
+    AmericanCallPayout,
+    AmericanPutPayout,
 )
 from tofina.components.strategy import BuyAndHold
 from tofina.macros.portfolioOptimization import optimizeStockPortfolioRiskAverse
@@ -21,6 +23,15 @@ timeType = Union[
     pd.Timestamp,
     dt.datetime,
 ]
+
+
+def numberOfTradingDaysBetweenTwoDays(start: timeType, end: timeType) -> int:
+    # TODO: Check if this is good enough
+    if isinstance(start, str):
+        start = pd.Timestamp(start)
+    if isinstance(end, str):
+        end = pd.Timestamp(end)
+    return len(pd.bdate_range(start=start, end=end))
 
 
 class Backtester:
@@ -44,7 +55,31 @@ class Backtester:
             ]
 
     def parseOptionData(self, df: pd.DataFrame, ticker: str):
-        pass
+        for i, row in tqdm(df.iterrows()):
+            timestamp = row["Date"]
+            maturity = numberOfTradingDaysBetweenTwoDays(timestamp, row["Expiry Date"])
+            call_price = row["Call Ask"]
+            put_price = row["Put Ask"]
+            strike = row["Strike Price"]
+            params = {"maturity": maturity, "strikePrice": strike}
+            if maturity > self.horizon:
+                continue
+
+            portfolio_ = self.pointInTimePortfolio[timestamp]
+            portfolio_.addInstrument(
+                ticker,
+                ticker + "_Call_" + str(strike) + "_" + str(maturity),
+                AmericanCallPayout,
+                call_price,
+                **params,
+            )
+            portfolio_.addInstrument(
+                ticker,
+                ticker + "_Put_" + str(strike) + "_" + str(maturity),
+                AmericanPutPayout,
+                put_price,
+                **params,
+            )
 
     def addDeposit(self, interestRate: float):
         for timestamp in self.timestamps:

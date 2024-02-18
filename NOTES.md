@@ -36,7 +36,7 @@ TODOs:
 
 Improvements:
 
-4. Negaitve weights
+4. Negaitve weights (no)
 5. Make Tests more deterministic
 6. Simplify Macros/ Make more reusable
 7. Option pricing - increase precision
@@ -50,7 +50,6 @@ Design Suggestion:
 
 Today work:
 
-1. Change Option payout
 2. Option parser
 3. Proper Liquidations
 4. Backtest reporting
