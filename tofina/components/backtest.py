@@ -1,22 +1,21 @@
 import torch
 import pandas as pd
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Callable
 import datetime as dt
 import tofina.components.portfolio as portfolio
-import functools
 from pathlib import Path
-from tofina.components.instrument import NonDerivativePayout, NonDerivativePayoutShort
+from tofina.components import asset
+from tofina.components.instrument import (
+    NonDerivativePayout,
+    payoffFnType,
+)
 from tofina.components.strategy import BuyAndHold
 from tofina.macros.portfolioOptimization import optimizeStockPortfolioRiskAverse
 from tofina.components.optimizer import Optimizer
 from tqdm import tqdm
-from tofina.utils import softmaxInverse
 
 
-def forecast(date: str, asset: str) -> torch.Tensor:
-    pass
-
-
+forcastType = Callable[[str, str, int, int, dict], torch.Tensor]
 timeType = Union[
     str,
     pd.Timestamp,
@@ -44,40 +43,37 @@ class Backtester:
                 index : index + self.horizon
             ]
 
-    def addStockToPortfolio(
-        self,
-        portfolio_: portfolio.Portfolio,
-        ticker: str,
-        price: float,
-        allowShorting: bool = False,
-        comission_dict: Dict[str, float] = {},
-    ):
-        if ticker in comission_dict:
-            comission = comission_dict[ticker]
-        else:
-            comission = 0
-        portfolio_.addInstrument(
-            ticker,
-            ticker + "_Stock",
-            NonDerivativePayout,
-            price,
-            comission,
-        )
-        if allowShorting:
-            portfolio_.addInstrument(
-                ticker,
-                ticker + "_Stock_Short",
-                NonDerivativePayoutShort,
-                price,
-                comission,
+    def addDeposit(self, interestRate: float):
+        for timestamp in self.timestamps:
+            portfolio_ = self.pointInTimePortfolio[timestamp]
+            portfolio_.addAsset(
+                name="GIC",
+                processFn=asset.GovernmentObligtaionProcess,
+                initialValue=100,
+                interestRate=interestRate,
             )
+            portfolio_.addInstrument(
+                assetName="GIC",
+                name="Deposit",
+                payoffFn=NonDerivativePayout,
+                price=100,
+            )
+
+    def addIntstrumentToPortfolio(
+        self,
+        ticker: str,
+        assetName: str,
+        payoffFn: payoffFnType = NonDerivativePayout,
+    ):
+        for timestamp in self.timestamps:
+            portfolio_ = self.pointInTimePortfolio[timestamp]
+            price = self.historicalTrajectory[ticker][timestamp][0]
+            portfolio_.addInstrument(ticker, ticker + "_" + assetName, payoffFn, price)
 
     def registerForecaster(
         self,
-        forecast: forecast,
+        forecast: forcastType,
         supported_tickers: List[str],
-        allowShorting: bool = False,
-        comission_dict: Dict[str, float] = {},
     ):
         for timestamp in self.timestamps:
             portfolio_ = self.pointInTimePortfolio[timestamp]
@@ -89,12 +85,8 @@ class Backtester:
                     )
 
                 portfolio_.addAsset(ticker, processFn)
-                price = self.historicalTrajectory[ticker][timestamp][0]
-                self.addStockToPortfolio(
-                    portfolio_, ticker, price, allowShorting, comission_dict
-                )
 
-    def optimizeStrategy(self, logFolderPath: str):
+    def optimizeStrategy(self, logFolderPath: str, RiskAversion: float = 0.5):
         logFolderPath = Path(logFolderPath)
         for timestamp in tqdm(self.timestamps):
             portfolio_ = self.pointInTimePortfolio[timestamp]
@@ -105,6 +97,7 @@ class Backtester:
             self.optimizers[timestamp] = optimizeStockPortfolioRiskAverse(
                 portfolio_,
                 logFolderPath / f"portfolioOptimization_{timestamp}.csv",
+                RiskAversion,
             )
 
     def evaluateStrategy(self):

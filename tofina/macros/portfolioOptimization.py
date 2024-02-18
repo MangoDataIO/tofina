@@ -52,12 +52,13 @@ def optimizeStockBondPortfolioRiskNeutral(
 def optimizeStockPortfolioRiskAverse(
     portfolio_: portfolio.Portfolio,
     csvLogFilePath: Optional[str],
+    RiskAversion: float = 0.5,
 ) -> optimizer.Optimizer:
     logger_ = logger.CsvLogger(filePath=csvLogFilePath)
     utility = preference.Preference(
         moneyUtilityFn=preference.MoneyUtilityCRRA,
         timeDiscountFn=preference.NoTimeDiscount,
-        RiskAversion=0.5,
+        RiskAversion=RiskAversion,
     )
     portfolioOptimizer = optimizer.Optimizer(
         portfolio=portfolio_,

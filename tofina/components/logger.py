@@ -13,11 +13,6 @@ class Logger:
         pass
 
 
-class TensorBoardLogger(Logger):
-    def __init__(self) -> None:
-        pass
-
-
 def fileExists(filePath: str) -> bool:
     try:
         with open(filePath, "r") as file:
@@ -35,7 +30,6 @@ class CsvLogger(Logger):
     def processRecord(
         self, metricsDict: Mapping[str, Callable[[List[torch.Tensor]], float]], t: int
     ) -> None:
-        # Check if the file exists
         fileExists = False
         try:
             with open(self.filePath, "r") as file:
@@ -43,14 +37,11 @@ class CsvLogger(Logger):
         except FileNotFoundError:
             pass
 
-        # Open the CSV file in append mode and write the header if the file is being created
         with open(self.filePath, "a", newline="") as file:
             fieldnames = list(metricsDict.keys())
             writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-            # Write header only if the file is being created
             if not fileExists:
                 writer.writeheader()
 
-            # Write the data
             writer.writerow(metricsDict)

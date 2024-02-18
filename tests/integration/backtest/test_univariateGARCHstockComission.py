@@ -12,7 +12,7 @@ import shutil
 # 1. Make forecaster compatible with Assets
 # 2. Create realPath dictionary
 # 3. Create backtest method
-def test_univariateGARCHstock():
+def test_univariateGARCHstockComission():
     SPY = loadHistoricalStockData("SPY")
     start_date = dt.datetime(2023, 1, 1)
     end_date = dt.datetime(2023, 1, 14)
@@ -29,12 +29,16 @@ def test_univariateGARCHstock():
     backtester = Backtester(timestamps=timestamps)
     backtester.stockDataFromDataFrame(SPY, "SPY")
     backtester.registerForecaster(forecaster, ["SPY"])
-    backtester.addIntstrumentToPortfolio("SPY", "Stock", instrument.NonDerivativePayout)
+    backtester.addIntstrumentToPortfolio(
+        "SPY",
+        "Stock",
+        instrument.OneTimeComissionDecorator(100, instrument.NonDerivativePayout),
+    )
     backtester.addIntstrumentToPortfolio(
         "SPY", "Stock Short", instrument.NonDerivativePayoutShort
     )
-    backtester.addDeposit(interestRate=0.2 / 252)
-    dir_path = Path("./tests/results/SPY_GARCH")
+    backtester.addDeposit(interestRate=0.05 / 252)
+    dir_path = Path("./tests/results/SPY_GARCH_Comission")
     if dir_path.exists():
         shutil.rmtree(dir_path)
     dir_path.mkdir(parents=True, exist_ok=False)

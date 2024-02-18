@@ -1,5 +1,5 @@
 from tofina.components import portfolio, instrument, asset, strategy
-from typing import List, Optional, Union, Mapping
+from typing import List, Union
 import torch
 
 

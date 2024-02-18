@@ -18,7 +18,6 @@ def test_allInstruments():
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.NonDerivativePayout,
         price=100,
-        comission=0,
     )
 
     instrument2 = instrument.Instrument(
@@ -26,7 +25,6 @@ def test_allInstruments():
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.EuropeanCallPayout,
         price=0,
-        comission=0,
         strikePrice=100,
         maturity=5,
     )
@@ -36,7 +34,6 @@ def test_allInstruments():
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.EuropeanPutPayout,
         price=0,
-        comission=0,
         strikePrice=100,
         maturity=5,
     )
@@ -46,7 +43,6 @@ def test_allInstruments():
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.AmericanCallPayout,
         price=0,
-        comission=0,
         strikePrice=100,
         maturity=5,
     )
@@ -56,7 +52,6 @@ def test_allInstruments():
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.AmericanPutPayout,
         price=0,
-        comission=0,
         strikePrice=100,
         maturity=5,
     )
@@ -100,3 +95,7 @@ def test_allInstruments():
     assert instrument3.revenue[testAsset.monteCarloSimulation > 100].sum() == 0
     assert instrument5.revenue[testAsset.monteCarloSimulation < 100].sum() > 0
     assert instrument5.revenue[testAsset.monteCarloSimulation > 100].sum() == 0
+
+
+def test_comission():
+    raise NotImplementedError

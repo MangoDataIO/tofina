@@ -60,10 +60,7 @@ class Strategy:
         prices = torch.cat(
             [instrument.price for instrument in self.instruments.values()]
         )
-        comissions = torch.cat(
-            [instrument.comission for instrument in self.instruments.values()]
-        )
-        returns = (instrumentX.permute(1, 2, 0) - prices - comissions) / prices
+        returns = (instrumentX.permute(1, 2, 0) - prices) / prices
         return (self.normalizedWeights * liquidations * returns[:, 1:, :]).sum(axis=2)
 
 

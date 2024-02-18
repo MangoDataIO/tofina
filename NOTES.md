@@ -15,21 +15,15 @@ Budge constraint, self-finance portfolio?
 
 Current Tasks:
 
-2. Simple Univariate and Mutlivariate generative processes:
-
-1) Gaussian processes using GPPytorch library
-
+2. Simple Univariate and Mutlivariate generative processes
 3. Calculate Implied Volatiltiy from Real prices
 4. Delta Hedging and Black Scholes (Delta Hedging is dynamic lol)
-   (
    For Delta Hedging need to solve following problems:
 
-- Need to allow shorting
 - pricing Fn to allow buy/sell, not just exercise
 - LiquidationFN to be (-1,1) to indicate buy/sell decisions (ignore)
   (Instead of LiqduiationFN use Weighting FN)
 - Currently only allow Exercising option
-  )
 
 TODOs:
 
@@ -48,8 +42,24 @@ Improvements:
 7. Option pricing - increase precision
 8. Investigate random jumps in utility (maybe because of floating point problems)
 9. Do not rely on csv logs when doing tests
+10. Maturity and Lock-In for deposits
 
 Design Suggestion:
 
 1. Metric Class to define what fields to use right away
-2. Fix shorting
+
+Today work:
+
+1. Experiment with different GARCH Setups
+2. Option parser
+3. Backtest reporting
+4. DeepAR integration
+5. Write tests
+6. Speed up Backtesting by creating global simultaneous optimizer
+7. Test comission
+
+GARCH experiments:
+
+1. Add risk free asset
+2. Add comissions
+3. Change risk averse

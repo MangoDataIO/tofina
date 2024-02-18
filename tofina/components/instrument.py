@@ -12,7 +12,6 @@ class Instrument:
         assetSimulation: torch.Tensor,
         payoffFn: payoffFnType,
         price: float,
-        comission: float = 0,
         **kwargs
     ) -> None:
         self.name = name
@@ -22,9 +21,6 @@ class Instrument:
             torch.tensor([price]).float(), requires_grad=False
         )
         self.params = utils.convertKwargsToTorchParameters(kwargs)
-        self.comission = torch.nn.Parameter(
-            torch.tensor([comission]), requires_grad=False
-        )
         self.revenue = self.calculateProfit()
 
     def calculateProfit(self) -> torch.Tensor:
@@ -36,6 +32,13 @@ class Instrument:
             )
             instrumentPayout.append(periodPayoff)
         return torch.stack(instrumentPayout).permute(1, 0)
+
+
+def OneTimeComissionDecorator(comission: float, payoffFn: payoffFnType) -> payoffFnType:
+    def comissionPayout(X: torch.Tensor, t: int, params: dict) -> torch.Tensor:
+        return payoffFn(X, t, params) - comission
+
+    return comissionPayout
 
 
 def NonDerivativePayout(X: torch.Tensor, t: int, params: dict) -> torch.Tensor:

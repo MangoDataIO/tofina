@@ -38,7 +38,6 @@ class Portfolio:
         name: str,
         payoffFn: instrument.payoffFnType,
         price: float,
-        comission: float = 0,
         **kwargs
     ) -> None:
         assetSimulation = self.getMonteCarloSimulation(assetName)
@@ -47,7 +46,6 @@ class Portfolio:
             assetSimulation,
             payoffFn,
             price,
-            comission=comission,
             **kwargs,
         )
         self.instruments[name + "_" + assetName] = instrument_

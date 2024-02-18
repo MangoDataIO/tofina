@@ -1,6 +1,5 @@
 import tofina.utils as utils
 import torch
-import math
 from typing import Callable
 
 moneyUtilityFnType = Callable[[torch.tensor, dict], torch.Tensor]
@@ -37,6 +36,10 @@ def NoTimeDiscount(time: int, params: dict) -> float:
 
 
 def MoneyUtilityCRRA(money: torch.Tensor, params: dict) -> torch.Tensor:
+    """
+    The bigger the riskAversion, the more risk averse the agent is
+    0 is risk neutral
+    """
     riskAversion = params["RiskAversion"]
     money = 1 + money
     money = torch.clip(money, min=0.01)  # to avoid negative utility
