@@ -1,11 +1,10 @@
 def test_historicalTrajectory():
-    # ensure rolling window consistency
-    pass
+    raise NotImplementedError
 
 
 def test_pointInTimePortfolio():
-    pass
+    raise NotImplementedError
 
 
 def test_simulationHorizon():
-    pass
+    raise NotImplementedError

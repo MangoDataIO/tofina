@@ -12,7 +12,6 @@ class Instrument:
         assetSimulation: torch.Tensor,
         payoffFn: payoffFnType,
         price: float,
-        short: bool = False,
         comission: float = 0,
         **kwargs
     ) -> None:
@@ -26,15 +25,13 @@ class Instrument:
         self.comission = torch.nn.Parameter(
             torch.tensor([comission]), requires_grad=False
         )
-        self.short = short
         self.revenue = self.calculateProfit()
 
     def calculateProfit(self) -> torch.Tensor:
         instrumentPayout = []
-        payoffSign = -1 if self.short else 1
         processLength = self.assetSimulation.shape[-1]
         for t in range(processLength):
-            periodPayoff = payoffSign * self.payoff(
+            periodPayoff = self.payoff(
                 self.assetSimulation.permute(1, 0), t, self.params
             )
             instrumentPayout.append(periodPayoff)
@@ -43,6 +40,10 @@ class Instrument:
 
 def NonDerivativePayout(X: torch.Tensor, t: int, params: dict) -> torch.Tensor:
     return X[t]
+
+
+def NonDerivativePayoutShort(X: torch.Tensor, t: int, params: dict) -> torch.Tensor:
+    return X[0] + (X[0] - X[t])
 
 
 def optionPayout_(

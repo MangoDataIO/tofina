@@ -5,11 +5,12 @@ import datetime as dt
 import tofina.components.portfolio as portfolio
 import functools
 from pathlib import Path
-from tofina.components.instrument import NonDerivativePayout
+from tofina.components.instrument import NonDerivativePayout, NonDerivativePayoutShort
 from tofina.components.strategy import BuyAndHold
 from tofina.macros.portfolioOptimization import optimizeStockPortfolioRiskAverse
 from tofina.components.optimizer import Optimizer
 from tqdm import tqdm
+from tofina.utils import softmaxInverse
 
 
 def forecast(date: str, asset: str) -> torch.Tensor:
@@ -21,10 +22,6 @@ timeType = Union[
     pd.Timestamp,
     dt.datetime,
 ]
-
-
-def equal_weights(self, num_instruments: int):
-    return [1 / num_instruments] * num_instruments
 
 
 class Backtester:
@@ -64,16 +61,14 @@ class Backtester:
             ticker + "_Stock",
             NonDerivativePayout,
             price,
-            False,
             comission,
         )
         if allowShorting:
             portfolio_.addInstrument(
                 ticker,
                 ticker + "_Stock_Short",
-                NonDerivativePayout,
+                NonDerivativePayoutShort,
                 price,
-                True,
                 comission,
             )
 
@@ -87,9 +82,13 @@ class Backtester:
         for timestamp in self.timestamps:
             portfolio_ = self.pointInTimePortfolio[timestamp]
             for ticker in supported_tickers:
-                portfolio_.addAsset(
-                    ticker, functools.partial(forecast, date=timestamp, asset=ticker)
-                )
+
+                def processFn(processLength, monteCarloTrials, params):
+                    return forecast(
+                        timestamp, ticker, processLength, monteCarloTrials, **params
+                    )
+
+                portfolio_.addAsset(ticker, processFn)
                 price = self.historicalTrajectory[ticker][timestamp][0]
                 self.addStockToPortfolio(
                     portfolio_, ticker, price, allowShorting, comission_dict
@@ -100,7 +99,8 @@ class Backtester:
         for timestamp in tqdm(self.timestamps):
             portfolio_ = self.pointInTimePortfolio[timestamp]
             portfolio_.setStrategy(
-                equal_weights(portfolio_.num_instruments), BuyAndHold
+                torch.rand(portfolio_.num_instruments),
+                BuyAndHold,
             )
             self.optimizers[timestamp] = optimizeStockPortfolioRiskAverse(
                 portfolio_,

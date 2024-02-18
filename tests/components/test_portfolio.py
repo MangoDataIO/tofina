@@ -62,3 +62,46 @@ def test_PortfolioObj():
     )
     test = portfolio_.simulatePnL()
     assert utils.check_equality(1.05**9 - 1, test[:, -1])
+
+
+def test_ShortInstrument():
+    portfolio_ = portfolio.Portfolio(processLength=10, monteCarloTrials=1000)
+    portfolio_.addAsset(
+        name="FakeCompany",
+        processFn=asset.GovernmentObligtaionProcess,
+        interestRate=0.02,
+        initialValue=100,
+    )
+    portfolio_.addInstrument(
+        assetName="FakeCompany",
+        name="StockShort",
+        payoffFn=instrument.NonDerivativePayoutShort,
+        price=100,
+    )
+    portfolio_.setStrategy(
+        portfolioWeights=[1],
+        liquidationFn=strategy.BuyAndHold,
+    )
+    portfolio_.simulatePnL()
+    payout_short = portfolio_.instruments["StockShort_FakeCompany"].revenue.mean(axis=0)
+
+    portfolio_ = portfolio.Portfolio(processLength=10, monteCarloTrials=1000)
+    portfolio_.addAsset(
+        name="FakeCompany",
+        processFn=asset.GovernmentObligtaionProcess,
+        interestRate=0.02,
+        initialValue=100,
+    )
+    portfolio_.addInstrument(
+        assetName="FakeCompany",
+        name="Stock",
+        payoffFn=instrument.NonDerivativePayout,
+        price=100,
+    )
+    portfolio_.setStrategy(
+        portfolioWeights=[1],
+        liquidationFn=strategy.BuyAndHold,
+    )
+    portfolio_.simulatePnL()
+    payout_long = portfolio_.instruments["Stock_FakeCompany"].revenue.mean(axis=0)
+    assert utils.check_equality(payout_short, 100 + (100 - payout_long))

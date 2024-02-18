@@ -52,3 +52,4 @@ Improvements:
 Design Suggestion:
 
 1. Metric Class to define what fields to use right away
+2. Fix shorting

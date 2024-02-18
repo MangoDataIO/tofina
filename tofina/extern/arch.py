@@ -27,7 +27,15 @@ def forecastDecoratorGARCH(df, split_date, horizon=20, simulations=1000, **arch_
         2, 0, 1
     )
 
-    def forecast(date: str, asset=None):
+    def forecast(
+        date: str,
+        asset=None,
+        processLength=horizon,
+        monteCarloTrials=simulations,
+        **params
+    ):
+        assert processLength == horizon
+        assert monteCarloTrials == simulations
         index = simulation.mean.index.get_loc(date)
         return simulation_values[index, :, :]
 

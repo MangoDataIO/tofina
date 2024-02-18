@@ -4,6 +4,7 @@ from tofina.extern.yfinance import loadHistoricalStockData
 import datetime as dt
 import numpy as np
 from pathlib import Path
+import shutil
 
 
 # TODO
@@ -13,7 +14,7 @@ from pathlib import Path
 def test_univariateGARCHstock():
     SPY = loadHistoricalStockData("SPY")
     start_date = dt.datetime(2023, 1, 1)
-    end_date = dt.datetime(2024, 1, 1)
+    end_date = dt.datetime(2023, 1, 14)
     split_date = start_date - dt.timedelta(days=1)
     timestamps = SPY.index[
         np.logical_and(SPY.index >= start_date, SPY.index < end_date)
@@ -26,9 +27,12 @@ def test_univariateGARCHstock():
     )
     backtester = Backtester(timestamps=timestamps)
     backtester.stockDataFromDataFrame(SPY, "SPY")
-    backtester.registerForecaster(forecaster, ["SPY"], allowShorting=False)
+    backtester.registerForecaster(forecaster, ["SPY"], allowShorting=True)
     dir_path = Path("./tests/results/SPY_GARCH")
     if dir_path.exists():
-        dir_path.rmdir()
+        shutil.rmtree(dir_path)
     dir_path.mkdir(parents=True, exist_ok=False)
     backtester.optimizeStrategy(dir_path)
+
+
+test_univariateGARCHstock()

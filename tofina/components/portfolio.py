@@ -38,7 +38,6 @@ class Portfolio:
         name: str,
         payoffFn: instrument.payoffFnType,
         price: float,
-        short: bool = False,
         comission: float = 0,
         **kwargs
     ) -> None:
@@ -48,7 +47,6 @@ class Portfolio:
             assetSimulation,
             payoffFn,
             price,
-            short=short,
             comission=comission,
             **kwargs,
         )
