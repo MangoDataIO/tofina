@@ -53,7 +53,6 @@ def test_integration():
     portfolio_.setStrategy(
         portfolioWeights=[0.6, 0.4, 0],
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=True,
     )
 
     profit = portfolio_.simulatePnL()

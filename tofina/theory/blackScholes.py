@@ -95,6 +95,5 @@ def generateBlackScholesPortfolio(
     BlackScholesPortfolio.setStrategy(
         portfolioWeights=initialWeights,
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     return BlackScholesPortfolio

@@ -145,6 +145,5 @@ def generateBinomialPortfolio(
     BinomialPortfolio.setStrategy(
         portfolioWeights=initialWeights,
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     return BinomialPortfolio

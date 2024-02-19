@@ -22,7 +22,6 @@ def test_autoExcerciseAmericanOption():
     portfolio_.setStrategy(
         portfolioWeights=[1],
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     profit = portfolio_.simulatePnL()
     assert profit.sum() > 0
@@ -48,7 +47,6 @@ def test_autoExcerciseAmericanOption2():
     portfolio_.setStrategy(
         portfolioWeights=[1],
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     profit = portfolio_.simulatePnL()
     assert profit.sum() > 0
@@ -74,7 +72,6 @@ def test_autoExcerciseEuropeanOption():
     portfolio_.setStrategy(
         portfolioWeights=[1],
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     profit = portfolio_.simulatePnL()
     assert profit.sum() > 0
@@ -100,7 +97,6 @@ def test_autoExcerciseEuropeanOption2():
     portfolio_.setStrategy(
         portfolioWeights=[1],
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     profit = portfolio_.simulatePnL()
     assert profit.sum() < 0

@@ -18,7 +18,6 @@ class Strategy:
         portfolioWeights: List[float],
         liquidationFn: liquidationFnType,
         instruments: instrumentsDictType,
-        normalizeWeights: bool = False,
         cache_liquidations: bool = False,
         cache_returns: bool = False,
         **kwargs
@@ -27,7 +26,7 @@ class Strategy:
         self.instruments = instruments
 
         self.softmax = torch.nn.Softmax(dim=0)
-        self.setPortfolioWeights(portfolioWeights, normalizeWeights=normalizeWeights)
+        self.setPortfolioWeights(portfolioWeights)
         self.params = utils.convertKwargsToTorchParameters(kwargs)
         self.setup_cache(cache_liquidations, cache_returns)
 
@@ -42,15 +41,11 @@ class Strategy:
 
     @property
     def normalizedWeights(self) -> torch.Tensor:
-        return self.softmax(self.portfolioWeights)
+        return self.portfolioWeights.abs() / self.portfolioWeights.abs().sum()
 
-    def setPortfolioWeights(
-        self, portfolioWeights: List[float], normalizeWeights: bool = False
-    ) -> None:
+    def setPortfolioWeights(self, portfolioWeights: List[float]) -> None:
         if type(portfolioWeights) is not torch.Tensor:
             portfolioWeights = torch.tensor(portfolioWeights)
-        if not normalizeWeights:
-            portfolioWeights = utils.softmaxInverse(portfolioWeights)
         self.portfolioWeights = torch.nn.Parameter(
             portfolioWeights, requires_grad=False
         )

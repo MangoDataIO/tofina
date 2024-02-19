@@ -25,6 +25,5 @@ def generateStockPortfolioFromMultiAsset(
     portfolio_.setStrategy(
         portfolioWeights=[1.0 / len(assetName)] * len(assetName),
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=False,
     )
     return portfolio_

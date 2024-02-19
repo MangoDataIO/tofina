@@ -44,6 +44,8 @@ Improvements:
 Design Suggestion:
 
 1. Metric Class to define what fields to use right away
+2. Fix Seed in Asset to reduce variance in optimization
+3. Remove Softmax in strategy normalized weights
 
 Today work:
 
@@ -52,12 +54,3 @@ Today work:
 5. DeepAR integration
 6. Write tests
 7. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
-
-Implied Volatility Comment:
-Risk Neutral:
-
-- Can do same routine as before
-
-Risk Averse:
-
-- Same routine as holding money??

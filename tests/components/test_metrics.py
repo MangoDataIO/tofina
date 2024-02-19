@@ -53,7 +53,6 @@ def test_metrics_integrity():
     portfolio_.setStrategy(
         portfolioWeights=[0.6, 0.4, 0],
         liquidationFn=strategy.BuyAndHold,
-        normalizeWeights=True,
     )
 
     utility = preference.Preference(

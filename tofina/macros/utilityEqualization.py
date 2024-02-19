@@ -68,9 +68,7 @@ def UtilityEqualization(
         lossFn=optimizer.UtilityEqualizationLoss,
         targetUtility=utils.tensorToFloat(targetUtility),
     )
-    zeroDerivativePortfolio.setPortfolioWeights(
-        derivativePortfolioWeights, normalizeWeights=False
-    )
+    zeroDerivativePortfolio.setPortfolioWeights(derivativePortfolioWeights)
     instrumentList = list(zeroDerivativePortfolio.strategy.instruments.keys())
     optimizationParams = []
     for target in derivativeTargets:
