@@ -52,3 +52,12 @@ Today work:
 5. DeepAR integration
 6. Write tests
 7. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
+
+Implied Volatility Comment:
+Risk Neutral:
+
+- Can do same routine as before
+
+Risk Averse:
+
+- Same routine as holding money??

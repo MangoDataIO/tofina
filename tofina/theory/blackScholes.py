@@ -38,10 +38,14 @@ def generateBlackScholesPortfolio(
     optionPrice: float,
     monteCarloTrials: int,
     initialWeights: List[float],
+    impliedVolaility: bool = False,
 ) -> portfolio.Portfolio:
     # http://www.columbia.edu/~mh2078/FoundationsFE/BlackScholes.pdf mu=r
     BlackScholesPortfolio = portfolio.Portfolio(
-        processLength=T, monteCarloTrials=monteCarloTrials
+        processLength=T,
+        monteCarloTrials=monteCarloTrials,
+        cache_asset=not impliedVolaility,
+        cache_instrument=not impliedVolaility,
     )
 
     BlackScholesPortfolio.addAsset(

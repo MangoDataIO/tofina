@@ -28,7 +28,7 @@ def derivativePricingLocationMapper(target, portfolio: portfolio.Portfolio):
 
 def impliedVolatilityLocationMapper(target, portfolio: portfolio.Portfolio):
     assetName = portfolio.strategy.instruments[target].assetName
-    pass
+    return f"portfolio.assets['{assetName}'].params['std']"
 
 
 def UtilityEqualization(
@@ -41,6 +41,7 @@ def UtilityEqualization(
     earlyStoppingTolerance: float = 0.00001,
     iterations: int = 1000,
     lr: float = 0.1,
+    early_stop=True,
 ) -> None:
     """
     New portfolio and preference derivative pricing model.
@@ -74,7 +75,7 @@ def UtilityEqualization(
     optimizationParams = []
     for target in derivativeTargets:
         index = instrumentList.index(target)
-        location = f"portfolio.strategy.instruments['{target}'].price"
+        location = locationMapper(target, zeroDerivativePortfolio)
         optimizationParams.append(location)
         portfolioOptimizer.registerMetric(
             target,
@@ -91,6 +92,7 @@ def UtilityEqualization(
         lr=lr,
         earlyStoppingTolerance=earlyStoppingTolerance,
         iterations=iterations,
+        stop=early_stop,
     )
 
 
@@ -104,55 +106,16 @@ def DerivativePricing(
     iterations: int = 1000,
     lr: float = 0.1,
 ) -> None:
-    """
-    New portfolio and preference derivative pricing model.
-    Finds deriative price that makes person indifferent between
-    adding and not adding arbitrary small ammount of the derivative
-    to their portfolio
-    """
-    derivativePortfolioWeights = rebalancePortfolioWeights(
+    return UtilityEqualization(
         zeroDerivativePortfolio,
-        zeroDerivativePortfolio.strategy.normalizedWeights,
         derivativeTargets,
+        optimizationLogFilePath,
+        utility,
+        derivativePricingLocationMapper,
         derivativeWeight,
-    )
-
-    logger_ = logger.CsvLogger(filePath=optimizationLogFilePath)
-    portfolioOptimizer = optimizer.Optimizer(
-        portfolio=zeroDerivativePortfolio,
-        preference=utility,
-        logger=logger_,
-    )
-    targetUtility = portfolioOptimizer.utility
-    portfolioOptimizer.registerLoss(
-        lossTargets=["utility"],
-        lossFn=optimizer.UtilityEqualizationLoss,
-        targetUtility=utils.tensorToFloat(targetUtility),
-    )
-    zeroDerivativePortfolio.setPortfolioWeights(
-        derivativePortfolioWeights, normalizeWeights=False
-    )
-    instrumentList = list(zeroDerivativePortfolio.strategy.instruments.keys())
-    optimizationParams = []
-    for target in derivativeTargets:
-        index = instrumentList.index(target)
-        location = f"portfolio.strategy.instruments['{target}'].price"
-        optimizationParams.append(location)
-        portfolioOptimizer.registerMetric(
-            target,
-            metricTargets=[location],
-            metricFn=lambda x, params: utils.tensorToFloat(x),
-        )
-        portfolioOptimizer.registerMetric(
-            "weight" + target,
-            metricTargets=["portfolio.strategy.normalizedWeights"],
-            metricFn=lambda x, params: utils.tensorToFloat(x[index]),
-        )
-    portfolioOptimizer.optimize(
-        paramsToOptimize=optimizationParams,
-        lr=lr,
-        earlyStoppingTolerance=earlyStoppingTolerance,
-        iterations=iterations,
+        earlyStoppingTolerance,
+        iterations,
+        lr,
     )
 
 
@@ -166,53 +129,15 @@ def ImpliedVolatility(
     iterations: int = 1000,
     lr: float = 0.1,
 ) -> None:
-    """
-    New portfolio and preference derivative pricing model.
-    Finds deriative price that makes person indifferent between
-    adding and not adding arbitrary small ammount of the derivative
-    to their portfolio
-    """
-    derivativePortfolioWeights = rebalancePortfolioWeights(
+    return UtilityEqualization(
         zeroDerivativePortfolio,
-        zeroDerivativePortfolio.strategy.normalizedWeights,
         derivativeTargets,
+        optimizationLogFilePath,
+        utility,
+        impliedVolatilityLocationMapper,
         derivativeWeight,
-    )
-
-    logger_ = logger.CsvLogger(filePath=optimizationLogFilePath)
-    portfolioOptimizer = optimizer.Optimizer(
-        portfolio=zeroDerivativePortfolio,
-        preference=utility,
-        logger=logger_,
-    )
-    targetUtility = portfolioOptimizer.utility
-    portfolioOptimizer.registerLoss(
-        lossTargets=["utility"],
-        lossFn=optimizer.UtilityEqualizationLoss,
-        targetUtility=utils.tensorToFloat(targetUtility),
-    )
-    zeroDerivativePortfolio.setPortfolioWeights(
-        derivativePortfolioWeights, normalizeWeights=False
-    )
-    instrumentList = list(zeroDerivativePortfolio.strategy.instruments.keys())
-    optimizationParams = []
-    for target in derivativeTargets:
-        index = instrumentList.index(target)
-        location = f"portfolio.strategy.instruments['{target}'].price"
-        optimizationParams.append(location)
-        portfolioOptimizer.registerMetric(
-            target,
-            metricTargets=[location],
-            metricFn=lambda x, params: utils.tensorToFloat(x),
-        )
-        portfolioOptimizer.registerMetric(
-            "weight" + target,
-            metricTargets=["portfolio.strategy.normalizedWeights"],
-            metricFn=lambda x, params: utils.tensorToFloat(x[index]),
-        )
-    portfolioOptimizer.optimize(
-        paramsToOptimize=optimizationParams,
-        lr=lr,
-        earlyStoppingTolerance=earlyStoppingTolerance,
-        iterations=iterations,
+        earlyStoppingTolerance,
+        iterations,
+        lr,
+        False,
     )

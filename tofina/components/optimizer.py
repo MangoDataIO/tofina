@@ -98,6 +98,7 @@ class Optimizer:
         iterations: int = 1000,
         lr: float = 0.01,
         earlyStoppingTolerance: float = 0.00001,
+        stop=True,
         optimizer: torch.optim.Optimizer = torch.optim.Adam,
     ) -> bool:
         converged = False
@@ -114,7 +115,7 @@ class Optimizer:
             loss, metricDict = self.calculateAndLogLoss(i)
             loss.backward()
             optim.step()
-            if earlyStop(loss):
+            if earlyStop(loss) and stop:
                 converged = True
                 break
         with torch.no_grad():
