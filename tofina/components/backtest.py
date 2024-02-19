@@ -43,7 +43,10 @@ class Backtester:
         self.optimizers: Dict[timeType, Optimizer] = {}
         for timestamp in timestamps:
             self.pointInTimePortfolio[timestamp] = portfolio.Portfolio(
-                processLength=horizon, monteCarloTrials=monteCarloTrials
+                processLength=horizon,
+                monteCarloTrials=monteCarloTrials,
+                cache_asset=True,
+                cache_instrument=True,
             )
 
     def stockDataFromDataFrame(self, df: pd.DataFrame, ticker: str):
@@ -131,6 +134,8 @@ class Backtester:
             portfolio_.setStrategy(
                 torch.rand(portfolio_.num_instruments),
                 BuyAndHold,
+                cache_returns=True,
+                cache_liquidations=True,
             )
             self.optimizers[timestamp] = optimizeStockPortfolioRiskAverse(
                 portfolio_,

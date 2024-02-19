@@ -15,7 +15,6 @@ Budge constraint, self-finance portfolio?
 
 Current Tasks:
 
-2. Simple Univariate and Mutlivariate generative processes
 3. Calculate Implied Volatiltiy from Real prices
 4. Delta Hedging and Black Scholes (Delta Hedging is dynamic lol)
    For Delta Hedging need to solve following problems:
@@ -30,9 +29,7 @@ TODOs:
 5. Delta, Gamma Hedging Objectves
    Delta Hedging - correlation between Asset price and return = 0
    Gamma Hedging - correlation between Asset price and return for different bins of asset prices = 0
-6. Generative Asset processes
-7. Try 1D processes with options on real data (HMM, Do)
-8. Calibrating Asset Process and Preferences to observed option prices
+6. Calibrating Asset Process and Preferences to observed option prices
 
 Improvements:
 
@@ -43,6 +40,7 @@ Improvements:
 8. Investigate random jumps in utility (maybe because of floating point problems)
 9. Do not rely on csv logs when doing tests
 10. Maturity and Lock-In for deposits
+11. REWRITE USING GLOBAL CACHE FOR COMPUTATIONS
 
 Design Suggestion:
 
@@ -50,11 +48,8 @@ Design Suggestion:
 
 Today work:
 
-2. Option parser
 3. Proper Liquidations
 4. Backtest reporting
 5. DeepAR integration
 6. Write tests
-7. Speed up Backtesting by creating global simultaneous optimizer
-8. Test comission
-9. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
+7. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit

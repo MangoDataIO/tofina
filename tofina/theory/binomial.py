@@ -132,9 +132,11 @@ def generateBinomialPortfolio(
         BinomialPortfolio.addInstrument(
             assetName="Company",
             name="EuropeanOption",
-            payoffFn=instrument.EuropeanCallPayout
-            if optionCall
-            else instrument.EuropeanPutPayout,
+            payoffFn=(
+                instrument.EuropeanCallPayout
+                if optionCall
+                else instrument.EuropeanPutPayout
+            ),
             price=optionPrice,
             maturity=optionMaturity,
             strikePrice=optionStrikePrice,
