@@ -1,7 +1,8 @@
 import torch
-from tofina.components import asset, instrument, strategy
+from tofina.components import asset, instrument, strategy, cache
 from typing import List, Optional, Union, Mapping
 from functools import cached_property
+from tofina.constants import ASSET_CACHE_KEY, INSTRUMENT_CACHE_KEY
 
 
 class Portfolio:
@@ -17,10 +18,14 @@ class Portfolio:
         self.strategy: Optional[strategy.Strategy] = None
         self.processLength = processLength
         self.monteCarloTrials = monteCarloTrials
-        self.cache_asset = cache_asset
-        self.cache_instrument = cache_instrument
-        self.asset_cache = None
-        self.instrument_cache = None
+        self.setup_cache(cache_asset, cache_instrument)
+
+    def setup_cache(self, cache_asset: bool, cache_instrument: bool):
+        self.caclculationsCache = cache.CalculationCache()
+        if cache_asset:
+            self.caclculationsCache.register_key(ASSET_CACHE_KEY)
+        if cache_instrument:
+            self.caclculationsCache.register_key(INSTRUMENT_CACHE_KEY)
 
     def addAsset(
         self, name: Union[str, List[str]], processFn: asset.processFnType, **kwargs
@@ -81,33 +86,23 @@ class Portfolio:
     def setPortfolioWeights(self, *args, **kwargs) -> None:
         self.strategy.setPortfolioWeights(*args, **kwargs)
 
-    def assetX_(self):
-        return torch.stack(
-            [self.assets[asset_].monteCarloSimulation for asset_ in self.assets]
-        )
-
-    def instrumentX_(self):
-        return torch.stack(
-            [instrument.revenue for instrument in self.instruments.values()]
-        )
-
     @property
     def assetX(self) -> torch.Tensor:
-        if self.cache_asset:
-            if self.asset_cache is None:
-                self.asset_cache = self.assetX_()
-            return self.asset_cache
-        else:
-            return self.assetX_()
+        def assetX_(self):
+            return torch.stack(
+                [self.assets[asset_].monteCarloSimulation for asset_ in self.assets]
+            )
+
+        return self.caclculationsCache(assetX_, ASSET_CACHE_KEY)(self)
 
     @property
     def instrumentX(self) -> torch.Tensor:
-        if self.cache_instrument:
-            if self.instrument_cache is None:
-                self.instrument_cache = self.instrumentX_()
-            return self.instrument_cache
-        else:
-            return self.instrumentX_()
+        def instrumentX_(self):
+            return torch.stack(
+                [instrument.revenue for instrument in self.instruments.values()]
+            )
+
+        return self.caclculationsCache(instrumentX_, INSTRUMENT_CACHE_KEY)(self)
 
     def simulatePnL(self) -> torch.Tensor:
         return self.strategy.estimateProfit(self.assetX, self.instrumentX)

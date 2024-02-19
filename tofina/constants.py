@@ -1,0 +1,5 @@
+ASSET_CACHE_KEY = "asset_cache"
+INSTRUMENT_CACHE_KEY = "instrument_cache"
+LIQUIDATIONS_CACHE_KEY = "liquidations_cache"
+RETURNS_CACHE_KEY = "returns_cache"
+EFFECTIVE_RETURNS_CACHE_KEY = "effective_returns_cache"

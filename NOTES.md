@@ -37,10 +37,9 @@ Improvements:
 5. Make Tests more deterministic
 6. Simplify Macros/ Make more reusable
 7. Option pricing - increase precision
-8. Investigate random jumps in utility (maybe because of floating point problems)
-9. Do not rely on csv logs when doing tests
-10. Maturity and Lock-In for deposits
-11. REWRITE USING GLOBAL CACHE FOR COMPUTATIONS
+8. Do not rely on csv logs when doing tests
+9. Maturity and Lock-In for deposits
+10. REWRITE USING GLOBAL CACHE FOR COMPUTATIONS
 
 Design Suggestion:
 

@@ -1,7 +1,12 @@
 import torch
 import tofina.utils as utils
 from typing import List, Callable, Mapping
-from tofina.components import instrument
+from tofina.components import instrument, cache
+from tofina.constants import (
+    LIQUIDATIONS_CACHE_KEY,
+    RETURNS_CACHE_KEY,
+    EFFECTIVE_RETURNS_CACHE_KEY,
+)
 
 instrumentsDictType = Mapping[str, instrument.Instrument]
 liquidationFnType = Callable[[torch.Tensor, instrumentsDictType, dict], torch.Tensor]
@@ -24,10 +29,16 @@ class Strategy:
         self.softmax = torch.nn.Softmax(dim=0)
         self.setPortfolioWeights(portfolioWeights, normalizeWeights=normalizeWeights)
         self.params = utils.convertKwargsToTorchParameters(kwargs)
-        self.cache_liquidations = cache_liquidations
-        self.cache_returns = cache_returns
-        self.liquidations_cache = None
-        self.returns_cache = None
+        self.setup_cache(cache_liquidations, cache_returns)
+
+    def setup_cache(self, cache_liquidations: bool, cache_returns: bool):
+        self.calculationsCache = cache.CalculationCache()
+        if cache_liquidations:
+            self.calculationsCache.register_key(LIQUIDATIONS_CACHE_KEY)
+        if cache_returns:
+            self.calculationsCache.register_key(RETURNS_CACHE_KEY)
+        if cache_liquidations and cache_returns:
+            self.calculationsCache.register_key(EFFECTIVE_RETURNS_CACHE_KEY)
 
     @property
     def normalizedWeights(self) -> torch.Tensor:
@@ -53,50 +64,54 @@ class Strategy:
         backroll = (1 - liquidations).cumprod(axis=2)
         return liquidations[:, :, 1:] * backroll[:, :, :-1]
 
-    def liquidations_(self, assetX: torch.Tensor) -> torch.Tensor:
-        liquidations = self.liquidationFn(assetX, self.instruments, self.params)
-        liquidations[:, :, -1] = 1
-        liquidations[:, :, 0] = 0
-        _, _, processLength = liquidations.shape
-        for i, key in enumerate(self.instruments):
-            if (
-                "maturity" in self.instruments[key].params
-                and self.instruments[key].params["maturity"] <= processLength
-            ):
-                liquidations[i, :, self.instruments[key].params["maturity"] - 1] = 1
-        liquidations = self.backrollLiquidations(liquidations).permute(1, 2, 0)
-        return liquidations
-
-    def returns_(self, instrumentX: torch.Tensor) -> torch.Tensor:
-        prices = torch.cat(
-            [instrument.price for instrument in self.instruments.values()]
-        )
-        returns = (instrumentX.permute(1, 2, 0) - prices) / prices
-        return returns
-
     def liquidations(self, assetX: torch.Tensor) -> torch.Tensor:
-        if self.cache_liquidations:
-            if self.liquidations_cache is None:
-                self.liquidations_cache = self.liquidations_(assetX)
-            return self.liquidations_cache
-        else:
-            return self.liquidations_(assetX)
+        def liquidations_(self, assetX: torch.Tensor) -> torch.Tensor:
+            liquidations = self.liquidationFn(assetX, self.instruments, self.params)
+            liquidations[:, :, -1] = 1
+            liquidations[:, :, 0] = 0
+            _, _, processLength = liquidations.shape
+            for i, key in enumerate(self.instruments):
+                if (
+                    "maturity" in self.instruments[key].params
+                    and self.instruments[key].params["maturity"] <= processLength
+                ):
+                    liquidations[i, :, self.instruments[key].params["maturity"] - 1] = 1
+            liquidations = self.backrollLiquidations(liquidations).permute(1, 2, 0)
+            return liquidations
+
+        return self.calculationsCache(liquidations_, LIQUIDATIONS_CACHE_KEY)(
+            self, assetX
+        )
 
     def returns(self, instrumentX: torch.Tensor) -> torch.Tensor:
-        if self.cache_returns:
-            if self.returns_cache is None:
-                self.returns_cache = self.returns_(instrumentX)
-            return self.returns_cache
-        else:
-            return self.returns_(instrumentX)
+        def returns_(self, instrumentX: torch.Tensor) -> torch.Tensor:
+            prices = torch.cat(
+                [instrument.price for instrument in self.instruments.values()]
+            )
+            returns = (instrumentX.permute(1, 2, 0) - prices) / prices
+            return returns
+
+        return self.calculationsCache(returns_, RETURNS_CACHE_KEY)(self, instrumentX)
+
+    def effectiveReturns(
+        self, assetX: torch.Tensor, instrumentX: torch.Tensor
+    ) -> torch.Tensor:
+        def effectiveReturns_(
+            self, assetX: torch.Tensor, instrumentX: torch.Tensor
+        ) -> torch.Tensor:
+            liquidations = self.liquidations(assetX)
+            returns = self.returns(instrumentX)
+            return liquidations * returns[:, 1:, :]
+
+        return self.calculationsCache(effectiveReturns_, EFFECTIVE_RETURNS_CACHE_KEY)(
+            self, assetX, instrumentX
+        )
 
     def estimateProfit(
         self, assetX: torch.Tensor, instrumentX: torch.Tensor
     ) -> torch.Tensor:
-        liquidations = self.liquidations(assetX)
-        returns = self.returns(instrumentX)
-
-        return (self.normalizedWeights * liquidations * returns[:, 1:, :]).sum(axis=2)
+        effectiveReturns = self.effectiveReturns(assetX, instrumentX)
+        return (self.normalizedWeights * effectiveReturns).sum(axis=2)
 
 
 def BuyAndHold(
