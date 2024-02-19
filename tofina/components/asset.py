@@ -44,7 +44,9 @@ def CompanyValueNormalDistributionProcess(
     mean = params["mean"]
     std = params["std"]
     initalValue = params["initialValue"]
-    X = 1 + torch.normal(mean=mean, std=std, size=(monteCarloTrials, processLength))
+    # reparametrization trick to make differentiable
+    sample = torch.randn((monteCarloTrials, processLength)) * std + mean
+    X = 1 + sample
     X[:, 0] = 1
     return initalValue * X.cumprod(axis=1)
 

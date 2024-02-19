@@ -22,14 +22,17 @@ def fileExists(filePath: str) -> bool:
 
 
 class CsvLogger(Logger):
-    def __init__(self, filePath: str) -> None:
+    def __init__(self, filePath: str, log_freq=20) -> None:
         if fileExists(filePath):
             raise FileExistsError("File already exists")
         self.filePath = filePath
+        self.log_freq = log_freq
 
     def processRecord(
         self, metricsDict: Mapping[str, Callable[[List[torch.Tensor]], float]], t: int
     ) -> None:
+        if t % self.log_freq != 0:
+            return
         fileExists = False
         try:
             with open(self.filePath, "r") as file:
