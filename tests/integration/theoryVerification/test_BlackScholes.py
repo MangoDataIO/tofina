@@ -1,8 +1,7 @@
 from tofina.components import preference
 from tofina.theory import blackScholes
-from tofina.macros import optionPricing
+from tofina.macros import utilityEqualization
 import pandas as pd
-import numpy as np
 
 
 def test_BlackScholesOptionPricingPut():
@@ -28,7 +27,7 @@ def test_BlackScholesOptionPricingPut():
         initialWeights=[0.5, 0.5, 0],
         monteCarloTrials=10000,
     )
-    optionPricing.UtilityEqualizationDerivativePricing(
+    utilityEqualization.DerivativePricing(
         zeroDerivativePortfolio,
         derivativeTargets=["EuropeanOption_Company"],
         optimizationLogFilePath=optimizationLogFilePath,
@@ -69,7 +68,7 @@ def test_BlackScholesOptionPricingCall():
         initialWeights=[0.5, 0.5, 0],
         monteCarloTrials=10000,
     )
-    optionPricing.UtilityEqualizationDerivativePricing(
+    utilityEqualization.DerivativePricing(
         zeroDerivativePortfolio,
         derivativeTargets=["EuropeanOption_Company"],
         optimizationLogFilePath=optimizationLogFilePath,

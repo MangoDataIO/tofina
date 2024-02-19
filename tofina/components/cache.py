@@ -6,6 +6,9 @@ class CalculationCache:
     def register_key(self, key):
         self.allowed_keys.add(key)
 
+    def update(self, key, value):
+        self.storage[key] = value
+
     def __call__(self, f, key):
         def wrapper(*args, **kwargs):
             if key not in self.allowed_keys:

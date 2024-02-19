@@ -3,8 +3,9 @@ import torch
 
 
 def test_allInstruments():
+    stockName = "testStock"
     testAsset = asset.Asset(
-        "testStock",
+        stockName,
         asset.CompanyValueNormalDistributionProcess,
         10,
         1000,
@@ -15,6 +16,7 @@ def test_allInstruments():
 
     instrument1 = instrument.Instrument(
         name="stockInstrument",
+        assetName=stockName,
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.NonDerivativePayout,
         price=100,
@@ -22,6 +24,7 @@ def test_allInstruments():
 
     instrument2 = instrument.Instrument(
         name="EuropeanCallInstrument",
+        assetName=stockName,
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.EuropeanCallPayout,
         price=0,
@@ -31,6 +34,7 @@ def test_allInstruments():
 
     instrument3 = instrument.Instrument(
         name="EuropeanPutInstrument",
+        assetName=stockName,
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.EuropeanPutPayout,
         price=0,
@@ -40,6 +44,7 @@ def test_allInstruments():
 
     instrument4 = instrument.Instrument(
         name="AmericanCallInstrument",
+        assetName=stockName,
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.AmericanCallPayout,
         price=0,
@@ -49,6 +54,7 @@ def test_allInstruments():
 
     instrument5 = instrument.Instrument(
         name="AmericanPutInstrument",
+        assetName=stockName,
         assetSimulation=testAsset.monteCarloSimulation,
         payoffFn=instrument.AmericanPutPayout,
         price=0,

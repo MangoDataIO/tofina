@@ -59,6 +59,7 @@ class Portfolio:
         assetSimulation = self.getMonteCarloSimulation(assetName)
         instrument_ = instrument.Instrument(
             name,
+            assetName,
             assetSimulation,
             payoffFn,
             price,

@@ -1,7 +1,7 @@
 from tofina.components import asset, preference
 from tofina.theory import binomial
 import tofina.utils as utils
-from tofina.macros import portfolioOptimization, optionPricing
+from tofina.macros import portfolioOptimization, utilityEqualization
 import pandas as pd
 import numpy as np
 
@@ -93,7 +93,7 @@ def test_TwoPeriodOptionPricing():
         initialWeights=[0.5, 0.5, 0],
         monteCarloTrials=10000,
     )
-    optionPricing.UtilityEqualizationDerivativePricing(
+    utilityEqualization.DerivativePricing(
         zeroDerivativePortfolio,
         derivativeTargets=["EuropeanOption_Company"],
         optimizationLogFilePath=optimizationLogFilePath,
@@ -124,7 +124,7 @@ def test_MultiPeriodOptionPricingPut():
         initialWeights=[0.5, 0.5, 0],
         monteCarloTrials=10000,
     )
-    optionPricing.UtilityEqualizationDerivativePricing(
+    utilityEqualization.DerivativePricing(
         zeroDerivativePortfolio,
         derivativeTargets=["EuropeanOption_Company"],
         optimizationLogFilePath=optimizationLogFilePath,
@@ -155,7 +155,7 @@ def test_MultiPeriodOptionPricingCall():
         initialWeights=[0.5, 0.5, 0],
         monteCarloTrials=10000,
     )
-    optionPricing.UtilityEqualizationDerivativePricing(
+    utilityEqualization.DerivativePricing(
         zeroDerivativePortfolio,
         derivativeTargets=["EuropeanOption_Company"],
         optimizationLogFilePath=optimizationLogFilePath,

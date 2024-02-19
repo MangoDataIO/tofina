@@ -1,5 +1,6 @@
 import torch
 import tofina.utils as utils
+from tofina.components.asset import Asset
 from typing import Callable
 
 payoffFnType = Callable[[torch.Tensor, int, dict], torch.Tensor]
@@ -9,18 +10,24 @@ class Instrument:
     def __init__(
         self,
         name: str,
+        assetName: str,
         assetSimulation: torch.Tensor,
         payoffFn: payoffFnType,
         price: float,
         **kwargs
     ) -> None:
         self.name = name
+        self.assetName = assetName
         self.assetSimulation = assetSimulation
         self.payoff = payoffFn
         self.price = torch.nn.Parameter(
             torch.tensor([price]).float(), requires_grad=False
         )
         self.params = utils.convertKwargsToTorchParameters(kwargs)
+        self.revenue = self.calculateProfit()
+
+    def updateAssetSimulation(self, newAssetSimulation: torch.Tensor) -> None:
+        self.assetSimulation = newAssetSimulation
         self.revenue = self.calculateProfit()
 
     def calculateProfit(self) -> torch.Tensor:
