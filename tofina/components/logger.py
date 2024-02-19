@@ -22,7 +22,7 @@ def fileExists(filePath: str) -> bool:
 
 
 class CsvLogger(Logger):
-    def __init__(self, filePath: str, log_freq=20) -> None:
+    def __init__(self, filePath: str, log_freq=1) -> None:
         if fileExists(filePath):
             raise FileExistsError("File already exists")
         self.filePath = filePath

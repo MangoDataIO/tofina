@@ -10,8 +10,8 @@ class Portfolio:
         self,
         processLength: int,
         monteCarloTrials: int,
-        cache_asset: bool = False,
-        cache_instrument: bool = False,
+        cache_asset: bool = True,
+        cache_instrument: bool = True,
     ) -> None:
         self.assets: Mapping[Union[str, List[str]], asset.Asset] = {}
         self.instruments: Mapping[str, instrument.Instrument] = {}
@@ -105,5 +105,20 @@ class Portfolio:
 
         return self.caclculationsCache(instrumentX_, INSTRUMENT_CACHE_KEY)(self)
 
+    def regenerateAllAssetsAndInstruments(self):
+        for asset_ in self.assets.values():
+            asset_.monteCarloSimulation = asset_.simulate()
+        for instrument_ in self.instruments.values():
+            instrument_.updateAssetSimulation(
+                self.getMonteCarloSimulation(instrument_.assetName)
+            )
+
+    def assetsAndInstruments(self):
+        useStale = self.caclculationsCache.use_stale_assets_and_instruments()
+        if not useStale:
+            self.regenerateAllAssetsAndInstruments()
+        return self.assetX, self.instrumentX
+
     def simulatePnL(self) -> torch.Tensor:
-        return self.strategy.estimateProfit(self.assetX, self.instrumentX)
+        assetX, instrumentX = self.assetsAndInstruments()
+        return self.strategy.estimateProfit(assetX, instrumentX)

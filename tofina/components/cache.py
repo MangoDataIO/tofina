@@ -1,3 +1,6 @@
+from tofina.constants import ASSET_CACHE_KEY, INSTRUMENT_CACHE_KEY
+
+
 class CalculationCache:
     def __init__(self):
         self.storage = {}
@@ -8,6 +11,11 @@ class CalculationCache:
 
     def update(self, key, value):
         self.storage[key] = value
+
+    def use_stale_assets_and_instruments(self):
+        cache_assets = ASSET_CACHE_KEY in self.allowed_keys
+        cache_instruments = INSTRUMENT_CACHE_KEY in self.allowed_keys
+        return cache_assets and cache_instruments
 
     def __call__(self, f, key):
         def wrapper(*args, **kwargs):
