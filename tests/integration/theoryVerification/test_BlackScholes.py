@@ -87,15 +87,14 @@ def test_BlackScholesOptionPricingCall():
     assert optimizationLog["EuropeanOption_Company"].iloc[-1] < target + 1
 
 
-"""
-TODO: Figure out implied volatility
+# TODO: Figure out implied volatility
 def test_BlackScholesImpliedVolatility():
     optimizationLogFilePath = "./tests/results/BlackScholesImpliedVolatility.csv"
     S = 100
     T = 10
     r = 0.05
     K = 100 * (1 + r) ** T + 20
-    sigma = 5
+    sigma = 0.09
     optionCall = True
     optionPrice = blackScholes.BlackScholesOptionPricing(S, K, T, r, sigma, optionCall)
     initial_sigma = 1.0
@@ -125,4 +124,3 @@ def test_BlackScholesImpliedVolatility():
         iterations=500,
         lr=0.1,
     )
-"""

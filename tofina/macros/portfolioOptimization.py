@@ -53,6 +53,7 @@ def optimizeStockPortfolioRiskAverse(
     portfolio_: portfolio.Portfolio,
     csvLogFilePath: Optional[str],
     RiskAversion: float = 0.5,
+    **kwargs
 ) -> optimizer.Optimizer:
     logger_ = logger.CsvLogger(filePath=csvLogFilePath)
     utility = preference.Preference(
@@ -82,5 +83,6 @@ def optimizeStockPortfolioRiskAverse(
     portfolioOptimizer.optimize(
         paramsToOptimize=["portfolio.strategy.portfolioWeights"],
         earlyStoppingTolerance=1e-8,
+        **kwargs
     )
     return portfolioOptimizer

@@ -2,6 +2,8 @@ import torch
 import tofina.utils as utils
 from torch.distributions.multivariate_normal import MultivariateNormal
 from typing import Callable, Union, List
+import random
+import numpy as np
 
 processFnType = Callable[[int, int, dict], torch.Tensor]
 
@@ -34,8 +36,16 @@ class Asset:
             assert type(name) is str
         self.name = name
 
-    def simulate(self) -> torch.Tensor:
-        return self.processFn(self.processLength, self.monteCarloTrials, self.params)
+    def setSeed(self, seed: int) -> None:
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+
+    def simulate(self, monteCarloTrials=None) -> torch.Tensor:
+        if monteCarloTrials is None:
+            monteCarloTrials = self.monteCarloTrials
+        self.setSeed(123)
+        return self.processFn(self.processLength, monteCarloTrials, self.params)
 
 
 def CompanyValueNormalDistributionProcess(

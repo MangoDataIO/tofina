@@ -105,9 +105,25 @@ class Portfolio:
 
         return self.caclculationsCache(instrumentX_, INSTRUMENT_CACHE_KEY)(self)
 
-    def regenerateAllAssetsAndInstruments(self):
+    def regenerateAllAssetsAndInstruments(self, monteCarloTrials: int = None):
         for asset_ in self.assets.values():
-            asset_.monteCarloSimulation = asset_.simulate()
+            asset_.monteCarloSimulation = asset_.simulate(monteCarloTrials)
+        for instrument_ in self.instruments.values():
+            instrument_.updateAssetSimulation(
+                self.getMonteCarloSimulation(instrument_.assetName)
+            )
+
+    def regenerateAssetsAndInstrumentsWithRealData(
+        self, assetDict: Mapping[str, torch.Tensor]
+    ):
+        for assetName in self.assets:
+            if assetName in assetDict:
+                self.assets[assetName].monteCarloSimulation = assetDict[assetName]
+            else:
+                self.assets[assetName].monteCarloSimulation = self.assets[
+                    assetName
+                ].simulate(1)
+
         for instrument_ in self.instruments.values():
             instrument_.updateAssetSimulation(
                 self.getMonteCarloSimulation(instrument_.assetName)

@@ -17,6 +17,9 @@ class CalculationCache:
         cache_instruments = INSTRUMENT_CACHE_KEY in self.allowed_keys
         return cache_assets and cache_instruments
 
+    def invalidate_all_cache(self):
+        self.storage = {}
+
     def __call__(self, f, key):
         def wrapper(*args, **kwargs):
             if key not in self.allowed_keys:
