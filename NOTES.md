@@ -15,21 +15,20 @@ TODOs:
 
 Improvements:
 
+3. Move Prepending with ones into the asset object as well as cumprod (makes very hard to develop extern)
 4. Negaitve weights (no)
 5. Make Tests more deterministic
 6. Simplify Macros/ Make more reusable
-7. Option pricing/Implied Volatility - increase precision (two portfolio optimizer??)
+7. Option pricing/Implied Volatility - increase precision (two portfolio optimizer??, start with Variance Minimization, should be the easiest)
 8. Do not rely on csv logs when doing tests
 9. Maturity and Lock-In for deposits
 10. Metric Class to define what fields to use right away
 
 Today work:
 
-1. Backtest results
 2. Comission and Initial Values
 3. Deep AR Multi Stock
 4. Proper Liquidations
-5. Backtest reporting
-6. DeepAR integration
-7. Write tests
-8. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
+5. DeepAR integration
+6. Write tests
+7. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
