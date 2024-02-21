@@ -26,7 +26,7 @@ def preprocess_df_dict(df_dict: Dict[str, pd.DataFrame]):
         df["date"] = df.index
         df["time_idx"] = range(df.shape[0])
         data.append(df)
-    assert [x.shape[0] == data[0].shape[0] for x in data[1:]].all()
+    assert all([x.shape[0] == data[0].shape[0] for x in data[1:]])
     return pd.concat(data).reset_index(drop=True)
 
 
@@ -64,14 +64,16 @@ def get_dataloaders(
     return training, validation, train_dataloader, val_dataloader
 
 
-def fit_model(training, train_dataloader, val_dataloader, log_dict="./multi_normal"):
+def fit_model(
+    training, train_dataloader, val_dataloader, log_dict="./multi_normal", max_epochs=30
+):
     tensorboard = pl_loggers.TensorBoardLogger(log_dict)
 
     early_stop_callback = EarlyStopping(
         monitor="val_loss", min_delta=1e-4, patience=10, verbose=False, mode="min"
     )
     trainer = pl.Trainer(
-        max_epochs=30,
+        max_epochs=max_epochs,
         accelerator="cpu",
         enable_model_summary=False,
         gradient_clip_val=0.1,
@@ -114,7 +116,8 @@ def forecastDecoratorDeepAR(
     log_dict="./multi_normal",
     horizon=20,
     simulations=1000,
-    max_encoder_length=60,
+    max_encoder_length=30,
+    max_epochs=30,
 ):
 
     data = preprocess_df_dict(df_dict)
@@ -128,9 +131,15 @@ def forecastDecoratorDeepAR(
         data,
         training_cutoff,
         context_length,
-        prediction_length,
+        prediction_length - 1,
     )
-    trainer = fit_model(training, train_dataloader, val_dataloader, log_dict=log_dict)
+    trainer = fit_model(
+        training,
+        train_dataloader,
+        val_dataloader,
+        log_dict=log_dict,
+        max_epochs=max_epochs,
+    )
     best_model_path = trainer.checkpoint_callback.best_model_path
     best_model = DeepAR.load_from_checkpoint(best_model_path)
     simulation = best_model.predict(
@@ -151,9 +160,9 @@ def forecastDecoratorDeepAR(
             simulation.index["time_idx"] == time_idx,
             simulation.index["series"] == asset,
         )
-        price = df_dict[asset]["Close"][df_dict[asset]["Date"] == date].values[0]
+        price = df_dict[asset]["Close"][df_dict[asset].index == date].values[0]
         output: torch.Tensor = simulation.output[mask].squeeze(0).T
-        output = (1 + simulation.simulations.values) / 100
+        output = (1 + output) / 100
         output = output.cumprod(axis=1)
         output = prepend_tensor_with_ones(output)
         output = output * price
