@@ -8,10 +8,8 @@ TODOs:
 
 - pricing Fn to allow buy/sell, not just exercise
 - Currently only allow Exercising option
-
-5. Delta, Gamma Hedging Objectves
-   Delta Hedging - correlation between Asset price and return = 0
-   Gamma Hedging - correlation between Asset price and return for different bins of asset prices = 0
+- Delta Hedging - correlation between Asset price and return = 0
+- Gamma Hedging - correlation between Asset price and return for different bins of asset prices = 0
 
 Improvements:
 
@@ -27,8 +25,6 @@ Improvements:
 Today work:
 
 2. Comission and Initial Values
-3. Deep AR Multi Stock
-4. Proper Liquidations
-5. DeepAR integration
-6. Write tests
-7. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
+3. Proper Liquidations
+4. Write tests (including DeepAR)
+5. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
