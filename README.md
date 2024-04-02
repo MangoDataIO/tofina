@@ -25,15 +25,15 @@ $\Pi(s,t) = \Delta w(s,t, P_W) \* I(s,t)$ - Profit is defined as liquidation tim
 
 $U = \sum_t \sum_s{u(\Pi(s,t), t, P_U)}$ - Investors utility is sum over utility in each period and each scenario. Money utility function $u$ determines if the investor is risk loving or risk averse
 
-$s$ is a Monte-Carlo scenario and $ t $ is time period
+$s$ is a Monte-Carlo scenario and $t$ is time period
 
 $P_A, P_I, P_W, P_U$ - are all differentiable parameters that can be optimized for
 
-Portfolio Optimisation: $w = \argmax_w U$
+Portfolio Optimisation: $w = argmax_w U$
 
-Implied Volatility: $\sigma = \argmin\_{sigma} U - U'$ where $U'$ is the utility of portfolio without the derivative
+Implied Volatility: $\sigma = argmin_{sigma} U - U'$ where $U'$ is the utility of portfolio without the derivative
 
-Derivative Pricing: $P = \argmin\_{P} U - U'$ where $U'$ is the utility of portfolio without the derivative
+Derivative Pricing: $P = argmin_{P} U - U'$ where $U'$ is the utility of portfolio without the derivative
 
 # What can Tofina already do and what is the vision?
 
