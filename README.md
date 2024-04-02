@@ -17,23 +17,23 @@ The project aims to be useful to finance researchers and trading practitioners t
 
 # Illustrative Mathematics
 
-$ A(s, t) = D(s, t, P_A)$ - Asset process, relies on reparametrisation trick to make it differentiable with respect to $P_A$
+$A(s, t) = D(s, t, P_A)$ - Asset process, relies on reparametrisation trick to make it differentiable with respect to $P_A$
 
-$ I(s,t) = C(A(s, t), P_I) $ - Instrument (derivative) is defined by a contract (payout) function C applied to generated asset values. The contract function includes things like comission too
+$I(s,t) = C(A(s, t), P_I)$ - Instrument (derivative) is defined by a contract (payout) function C applied to generated asset values. The contract function includes things like comission too
 
-$ \Pi(s,t) = \Delta w(s,t, P_W) \* I(s,t)$ - Profit is defined as liquidation times holding of certain instrument
+$\Pi(s,t) = \Delta w(s,t, P_W) \* I(s,t)$ - Profit is defined as liquidation times holding of certain instrument
 
-$ U = \sum_t \sum_s{u(\Pi(s,t), t, P_U)} $ - Investors utility is sum over utility in each period and each scenario. Money utility function $u$ determines if the investor is risk loving or risk averse
+$U = \sum_t \sum_s{u(\Pi(s,t), t, P_U)}$ - Investors utility is sum over utility in each period and each scenario. Money utility function $u$ determines if the investor is risk loving or risk averse
 
-$ s $ is a Monte-Carlo scenario and $ t $ is time period
+$s$ is a Monte-Carlo scenario and $ t $ is time period
 
-$ P_A, P_I, P_W, P_U $ - are all differentiable parameters that can be optimized for
+$P_A, P_I, P_W, P_U$ - are all differentiable parameters that can be optimized for
 
-Portfolio Optimisation: $ w = \argmax_w U$
+Portfolio Optimisation: $w = \argmax_w U$
 
-Implied Volatility: $ \sigma = \argmin\_{sigma} U - U' $ where $U' $ is the utility of portfolio without the derivative
+Implied Volatility: $\sigma = \argmin\_{sigma} U - U'$ where $U'$ is the utility of portfolio without the derivative
 
-Derivative Pricing: $ P = \argmin\_{P} U - U' $ where $U' $ is the utility of portfolio without the derivative
+Derivative Pricing: $P = \argmin\_{P} U - U'$ where $U'$ is the utility of portfolio without the derivative
 
 # What can Tofina already do and what is the vision?
 
