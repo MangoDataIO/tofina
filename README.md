@@ -31,9 +31,9 @@ $P_A, P_I, P_W, P_U$ - are all differentiable parameters that can be optimized f
 
 Portfolio Optimisation: $w = argmax_w U$
 
-Implied Volatility: $\sigma = argmin_{sigma} U - U'$ where $U'$ is the utility of portfolio without the derivative
+Implied Volatility: $\sigma = argmin_{\sigma} (U - U')$ where $U'$ is the utility of portfolio without the derivative
 
-Derivative Pricing: $P = argmin_{P} U - U'$ where $U'$ is the utility of portfolio without the derivative
+Derivative Pricing: $P = argmin_{P} (U - U)'$ where $U'$ is the utility of portfolio without the derivative
 
 # What can Tofina already do and what is the vision?
 
