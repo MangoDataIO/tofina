@@ -31,9 +31,5 @@ def tensorToFloat(tensor: torch.Tensor) -> float:
     return float(tensor.detach())
 
 
-def softmaxInverse(X: torch.Tensor) -> torch.Tensor:
-    return torch.log(X)
-
-
 def combinations(n: int, k: int) -> float:
     return math.factorial(n) / (math.factorial(k) * math.factorial(n - k))

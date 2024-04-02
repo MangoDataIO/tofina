@@ -101,8 +101,3 @@ def test_allInstruments():
     assert instrument3.revenue[testAsset.monteCarloSimulation > 100].sum() == 0
     assert instrument5.revenue[testAsset.monteCarloSimulation < 100].sum() > 0
     assert instrument5.revenue[testAsset.monteCarloSimulation > 100].sum() == 0
-
-
-X = torch.tensor(
-    [[100, 120, 130, 150], [100, 100, 100, 1000], [100, 80, 70, 50]]
-).float()
