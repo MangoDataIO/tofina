@@ -141,6 +141,7 @@ class Backtester:
     def optimizeStrategy(self, logFolderPath: str, RiskAversion: float = 0.5, **kwargs):
         logFolderPath = Path(logFolderPath)
         for timestamp in tqdm(self.timestamps):
+            print("Tofina: Optimizing Portfolio at timestamp: ", timestamp)
             portfolio_ = self.pointInTimePortfolio[timestamp]
             portfolio_.setStrategy(
                 torch.rand(portfolio_.num_instruments),

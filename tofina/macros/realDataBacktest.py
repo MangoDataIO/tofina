@@ -73,7 +73,7 @@ def DeepAR_OptionTrading_BackTest(
     backtester = Backtester(timestamps=timestamps)
 
     for stock in stock_data:
-        backtester.stockDataFromDataFrame(stock_data, stock)
+        backtester.stockDataFromDataFrame(stock_data[stock], stock)
     backtester.registerForecaster(forecaster, stocks)
     backtester.addDeposit(interestRate=daily_interest_rate)
 
