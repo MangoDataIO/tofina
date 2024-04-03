@@ -41,11 +41,11 @@ Derivative Pricing: $P = argmin_{P} (U - U)'$ where $U'$ is the utility of portf
 
 # What can Tofina already do and what is the vision?
 
-- [x] Replicated theoritical results for portfolio allocations in Black-Scholes, Binomial and Variance Minimization models
-- [x] Replicated theoretical results for the Black-Scholes and Binomial option pricing
-- [x] Replicated theoretical results for Black-Scholes implied volatility (unstable at the moment)
-- [x] Simple single asset trading system on real data using ARCH package to represent asset process
-- [x] Simple multiasset trading system on real data using DeepVAR model from pytorch-forecasting to represent asset process
+- [x] Replicated theoritical results for portfolio allocations in Binomial [[Code](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/tests/integration/theoryVerification/test_binomial.py#L48)] and Variance Minimization [[Code](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/tests/integration/theoryVerification/test_varianceMinimization.py)] models
+- [x] Replicated theoretical results for the Black-Scholes [[Code](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/tests/integration/theoryVerification/test_BlackScholes.py#L48)] and Binomial [[Code](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/tests/integration/theoryVerification/test_binomial.py#L141)] option pricing
+- [x] Replicated theoretical results for Black-Scholes implied volatility [[Code](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/tests/integration/theoryVerification/test_BlackScholes.py#L91)] (unstable at the moment)
+- [x] Simple single asset trading system on real data using ARCH package to represent asset process [[Code](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/tests/integration/backtest/test_univariateGARCHstock.py)]
+- [x] Simple multiasset trading system on real data using DeepVAR model from pytorch-forecasting to represent asset process [[demo.ipynb](https://github.com/MangoDataIO/tofina/blob/main/demo.ipynb)]
 - [ ] Improve implied volatility and other parameter estimation
 - [ ] More sophisticated entry/exit strategy than Buy-And-Hold (use NN to sell/exercise options before expiry date)
 - [ ] Fitting and evaluation of different generative processes on real data
@@ -56,4 +56,4 @@ Derivative Pricing: $P = argmin_{P} (U - U)'$ where $U'$ is the utility of portf
 
 # How can I start using Tofina?
 
-TODO
+Check the links to code in the section above. [requirements.txt](https://github.com/MangoDataIO/tofina/blob/1e0cfcd8118ffef6f9ae20d374e2fe46043e3561/requirements.txt) file with all the dependancies is included
