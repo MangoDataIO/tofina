@@ -29,8 +29,8 @@ Today work:
 4. Write tests (including DeepAR)
 5. Investigate permutes in intrument.py calculateProfit and stategy.py estimateProfit
 
-1) Make easy to use demo
-2) README
-3) Improve accuracy
-4) Refactor
-5) Put small data somewhere public
+2) Add macro for deepvar example
+3) Add demo file
+4) Add links to code
+5) Remove unnecessary files
+6) Add requirements.txt

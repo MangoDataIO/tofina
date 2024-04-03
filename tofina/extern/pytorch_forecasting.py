@@ -35,7 +35,7 @@ def get_training_cutoff(data, split_date):
 
 
 def get_dataloaders(
-    data, training_cutoff, context_length, prediction_length, batch_size=32
+    data, training_cutoff, context_length, prediction_length, batch_size=512
 ):
     training = TimeSeriesDataSet(
         data[lambda x: x.time_idx <= training_cutoff],
@@ -56,10 +56,18 @@ def get_dataloaders(
     )
     # synchronize samples in each batch over time - only necessary for DeepVAR, not for DeepAR
     train_dataloader = training.to_dataloader(
-        train=True, batch_size=batch_size, num_workers=0, batch_sampler="synchronized"
+        train=True,
+        batch_size=batch_size,
+        num_workers=4,
+        batch_sampler="synchronized",
+        persistent_workers=True,
     )
     val_dataloader = validation.to_dataloader(
-        train=False, batch_size=batch_size, num_workers=0, batch_sampler="synchronized"
+        train=False,
+        batch_size=batch_size,
+        num_workers=4,
+        batch_sampler="synchronized",
+        persistent_workers=True,
     )
     return training, validation, train_dataloader, val_dataloader
 
